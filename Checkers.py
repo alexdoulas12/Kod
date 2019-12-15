@@ -95,54 +95,45 @@ def move_pawn():
 def check():
     lista=[]
     print("CHECK")
-    for i in range(GRID_SIZE):
-            for j in range(GRID_SIZE):
-                if b[j][i]!=None:
-                    if b[j][i].color=="B":
-                        print(b[j][i].color, (j,i))
-                        if j==0:
-                            if  b[j+1][j+1]!=None:
-                                if  b[j+1][j+1].color=="W":
-                                    if b[j+2][j+2]==None:
+    for x in range(GRID_SIZE):
+            for y in range(GRID_SIZE):
+                if b[x][y]!=None:
+                    if b[x][y].color=="B":
+                        print(b[x][y].color, (x,y))
+                        if x==0:
+                            if  b[x+1][x+1]!=None:
+                                if  b[x+1][y+1].color=="W":
+                                    if b[x+2][y+2]==None:
                                         print("dfghlkdfg")
-                                        lista.append([i,j])
+                                        lista.append([x,y])
                                     
-                        if j==GRID_SIZE-1:
-                            if b[j+1][j-1]!=None:
-                                if b[j+1][j-1].color=="W":
+                        if x==GRID_SIZE-1:
+                            if b[x+1][y-1]!=None:
+                                if b[x+1][y-1].color=="W":
                                     if b[j+2][j-2]==None:
                                         print("JHABSFKBASF")
-                                        lista.append([i,j])
-                        if j==1:
-                            if  b[j+1][j+1]!=None:
-                                if  b[j+1][j+1].color=="W":
-                                    if b[j+2][j+2]==None:
+                                        lista.append([x,y])
+                        if x==1:
+                            if  b[x+1][y+1]!=None:
+                                if  b[x+1][y+1].color=="W":
+                                    if b[x+2][y+2]==None:
                                         print("dfghlkdfg")
-                                        lista.append([j,i])
+                                        lista.append([x,y])
 
-                        if j==GRID_SIZE-2:
-                            if b[j+1][i-1]!=None:
-                                if b[j+1][i-1].color=="W":
-                                    if b[j+2][i-2]==None:
+                        if x==GRID_SIZE-1:
+                            if b[x+1][y-1]!=None:
+                                if b[x+1][y-1].color=="W":
+                                    if b[x+2][y-2]==None:
                                         print("JHABSFKBASF")
-                                        lista.append([j,i])
+                                        lista.append([x,y])
 
-                        if j>1 and j<GRID_SIZE-1:
-                            if  b[j+1][i+1]!=None or b[j+1][i-1]!=None:
-                                print("j,i")
-                                print(j,i)
-                                print(b[j][i])
-                                print("I+1,J+1")
-                                print((i+1),(j+1))
-                                print(b[j+1][i+1])
-                                print("I+1,J-1")
-                                print((j+1),(i-1))
-                                print(b[j+1][i-1])
+                        if x>1 and x<GRID_SIZE-2:
+                            if  b[x+1][y+1]!=None or b[x+1][y-1]!=None:
                                 if  b[j+1][i+1].color=="W" or b[j+1][i-1].color=="W":
                                     print("HAHA")
-                                    if b[j+2][i+2]==None or b[j+2][i-2]==None:
+                                    if b[x+2][y+2]==None or b[x+2][y-2]==None:
                                         print("ajajaj")
-                                        lista.append([j,i])
+                                        lista.append([x,y])
 
     return  lista
                                                   
@@ -156,3 +147,4 @@ def main():
 
 main()
 #print(lista)
+
