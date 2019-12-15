@@ -57,16 +57,24 @@ b = create_board()
 #svart standardrörelse fram index:[+1][+-1]
 #vit capture index:[-2][+-2]
 #svart capture index:[+2][+-2]
-def move_pawn():
+def move_pawn(lista):
     while True:
-        p=input("Välj en bricka att flytta ")
+        p=input("Välj en bricka att flytta ").upper()
         y=int((ord(p[0])-65))
         x=int(p[1])
+
+        if(len(lista) > 0):
+            if([x, y] not in lista):
+                print("The following pawns have moves:")
+                for pawn in lista:
+                    print(chr(pawn[1] + 65) + str(pawn[0]))
+                continue
         if b[x][y]!=None and b[x][y].color=="B":
             while True:#Flyttar svart spelare
-                k=input("Välj en bricka att flytta till ")
+                k=input("Välj en bricka att flytta till ").upper()
                 w=int((ord(k[0])-65))
                 z=int(k[1])
+
                 if z==x+1 and (w==y+1 or w==y-1):
                     if b[z][w]==None:
                         b[z][w]=b[x][y]
@@ -80,7 +88,7 @@ def move_pawn():
                     
         if b[x][y]!=None and b[x][y].color=="W":
             while True:#Flyttar svart spelare
-                k=input("Välj en bricka att flytta till ")
+                k=input("Välj en bricka att flytta till ").upper()
                 w=int((ord(k[0])-65))
                 z=int(k[1])
                 if z==x-1 and (w==y+1 or w==y-1):
@@ -89,62 +97,71 @@ def move_pawn():
                         b[x][y]=None
                         return False
 
-
-
-
-def check():
+def check(c):
     lista=[]
     print("CHECK")
-    for x in range(GRID_SIZE):
-            for y in range(GRID_SIZE):
-                if b[x][y]!=None:
-                    if b[x][y].color=="B":
-                        print(b[x][y].color, (x,y))
-                        if x==0:
-                            if  b[x+1][x+1]!=None:
-                                if  b[x+1][y+1].color=="W":
-                                    if b[x+2][y+2]==None:
-                                        print("dfghlkdfg")
-                                        lista.append([x,y])
-                                    
-                        if x==GRID_SIZE-1:
-                            if b[x+1][y-1]!=None:
-                                if b[x+1][y-1].color=="W":
-                                    if b[j+2][j-2]==None:
-                                        print("JHABSFKBASF")
-                                        lista.append([x,y])
-                        if x==1:
-                            if  b[x+1][y+1]!=None:
-                                if  b[x+1][y+1].color=="W":
-                                    if b[x+2][y+2]==None:
-                                        print("dfghlkdfg")
-                                        lista.append([x,y])
-
-                        if x==GRID_SIZE-1:
-                            if b[x+1][y-1]!=None:
-                                if b[x+1][y-1].color=="W":
-                                    if b[x+2][y-2]==None:
-                                        print("JHABSFKBASF")
-                                        lista.append([x,y])
-
-                        if x>1 and x<GRID_SIZE-2:
-                            if  b[x+1][y+1]!=None or b[x+1][y-1]!=None:
-                                if  b[j+1][i+1].color=="W" or b[j+1][i-1].color=="W":
-                                    print("HAHA")
-                                    if b[x+2][y+2]==None or b[x+2][y-2]==None:
-                                        print("ajajaj")
-                                        lista.append([x,y])
-
+    for y in range(GRID_SIZE):
+        for x in range(GRID_SIZE):
+            if b[y][x] != None and b[y][x].color == c:
+                if(is_valid_move(y, x)):
+                    lista.append([y, x])
+    print(lista)
     return  lista
-                                                  
-                            
+
+def is_valid_move(y, x):    
+    pawn = b[y][x]
+    #   If the pawn is white
+    if(pawn.color == "W"):
+        if(can_jump_up(y)):
+            if(can_jump_left(x)):
+
+                #   Checks if there is a black pawn top left
+                if(b[y - 1][x - 1] != None and b[y - 1][x - 1].color == "B"):
+                    if(b[y - 2][x - 2] == None):
+                        return True
+
+            if(can_jump_right(x)):
+
+                #   Checks if there is a black pawn top right
+                if(b[y - 1][x + 1] != None and b[y - 1][x + 1].color == "B"):
+                    if(b[y - 2][x + 2] == None):
+                        return True
+
+    return False
+
+def can_jump_up(y):
+    if(y - 2 >= 0):
+        return True
+    else:
+        return False
+
+def can_jump_left(x):
+    if(x - 2 >= 0):
+        return True
+    else:
+        return False
+
+def can_jump_right(x):
+    if(x + 2 < GRID_SIZE):
+        return True
+    else:
+        return False
+
 def main():
-    for m in range(3):
+    
+    while(True):
+        #   White move
         print_board(b)
-        lista=check()
-        move_pawn()
-        print(lista)
+        lista=check("W")
+        print("White's turn")
+        move_pawn(lista)
+
+        #   Black move
+        print_board(b)
+        print("Black's turn")
+        lista=check("B")
+        move_pawn(lista)
+
 
 main()
-#print(lista)
 
