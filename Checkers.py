@@ -1,6 +1,6 @@
 import datetime
 start = datetime.datetime.now().time
-print(start)
+#print(start)
 #end=datetime.datetime.now().time
 #return 
 class Pawn(object):
@@ -8,7 +8,8 @@ class Pawn(object):
     def __init__(self,color,isdam):
             self.color=color
             self.isdam=isdam
-GRID_SIZE = 8
+GRID_SIZE = 10
+
 def create_board():
     board=[]
     for i in range(GRID_SIZE):
@@ -35,6 +36,7 @@ def create_board():
                     #r.append(pos(White,False))
         board.append(r)
     return board
+
 def print_board(board):
     print("     ", end="")
     for i in range(GRID_SIZE):
@@ -53,81 +55,208 @@ def print_board(board):
         print("")
     print("")
 b = create_board()
-#vit standardrörelse fram index:[-1][+-1]
-#svart standardrörelse fram index:[+1][+-1]
-#vit capture index:[-2][+-2]
-#svart capture index:[+2][+-2]
-def move_pawn(lista):
-    while True:
+#!!!TILL NÄSTA GÅNG!!!
+# 1.)Lägg till check_for_queen i move_pawn
+# 2.) Tidsfunktion + highscore-lista
+
+def move_pawn(lista,c):
+    move_made=False
+    Outer=True
+    while Outer:
         p=input("Välj en bricka att flytta ").upper()
         y=int((ord(p[0])-65))
         x=int(p[1])
-
+        
         if(len(lista) > 0):
             if([x, y] not in lista):
                 print("The following pawns have moves:")
                 for pawn in lista:
                     print(chr(pawn[1] + 65) + str(pawn[0]))
                 continue
-        if b[x][y]!=None and b[x][y].color=="B":
+        if b[x][y]!=None and b[x][y].color!=c:
+            continue
+        
+        if b[x][y]!=None and c=="B":
+            if (len(lista)==0) and (b[x+1][y-1] and b[x+1][y+1])!=None:
+                continue
             while True:#Flyttar svart spelare
                 k=input("Välj en bricka att flytta till ").upper()
                 w=int((ord(k[0])-65))
                 z=int(k[1])
-
-                if z==x+1 and (w==y+1 or w==y-1):
-                    if b[z][w]==None:
-                        b[z][w]=b[x][y]
-                        b[x][y]=None
-                        return False
-                    if b[z][w].color=="W":
-                        if b[z+1][w+1]==None:
-                            b[z+1][w+1]=b[x][y]
+                if([x, y]) in lista:
+                    if z==x+2:
+                        if w==y+2:
+                            b[z][w]=b[x][y]
+                            b[z-1][w-1]=None
                             b[x][y]=None
-                            return False
+                            Outer=False
+                            move_made=True
+                            check_for_queen(c,z,w)
+                            break
+                            
+                        if w==y-2:
+                            b[z][w]=b[x][y]
+                            b[z-1][w+1]=None
+                            b[x][y]=None
+                            Outer=False
+                            move_made=True
+                            check_for_queen(c, z, w)
+                            break
+                        else:
+                            return True
+                else:
+                    if z==x+1 and (w==y+1 or w==y-1):
+                        if b[z][w]==None:
+                            b[z][w]=b[x][y]
+                            b[x][y]=None
+                            Outer=False
+                            check_for_queen(c, z, w)
+                            break
                     
-        if b[x][y]!=None and b[x][y].color=="W":
-            while True:#Flyttar svart spelare
+        if b[x][y]!=None and c=="W":
+            if (len(lista)==0) and (b[x-1][y-1] and b[x-1][y+1])!=None:
+                continue
+            while True:#Flyttar vit spelare
                 k=input("Välj en bricka att flytta till ").upper()
                 w=int((ord(k[0])-65))
                 z=int(k[1])
-                if z==x-1 and (w==y+1 or w==y-1):
-                    if b[z][w]==None: 
-                        b[z][w]=b[x][y]
-                        b[x][y]=None
-                        return False
+                if([x,y]) in lista:
+                    if z==x-2:
+                        if w==y-2:
+                            b[z][w]=b[x][y]
+                            b[z+1][w+1]=None
+                            b[x][y]=None
+                            Outer=False
+                            move_made=True
+                            check_for_queen(c, z, w)
+                            break
+                        if w==y+2:
+                            b[z][w]=b[x][y]
+                            b[z+1][w-1]=None
+                            b[x][y]=None
+                            Outer=False
+                            move_made=True
+                            check_for_queen(c, z, w)
+                            break
+                        else:
+                            return True
+                else:
+                    if z==x-1 and (w==y+1 or w==y-1):
+                        if b[z][w]==None: 
+                            b[z][w]=b[x][y]
+                            b[x][y]=None
+                            Outer=False
+                            check_for_queen(c, z, w)
+                            break              
+    else:
+        if move_made:
+            lista=check(c)
+            for pawn in lista:
+                    print(chr(pawn[1] + 65) + str(pawn[0]))
+            while (check_for_more_moves(c,lista,x,y,w,z))==True:   
+                    another_move(c,lista,x,y)
+
+def another_move(c,lista,x,y):
+    for pawn in lista:
+            y=pawn[1]
+            x=pawn[0]
+    print("y, x")
+    print(y,x)
+    print(chr(y+65),x)
+    print("lista:")
+    for pawn in lista:
+            print(chr(pawn[1] + 65) + str(pawn[0]))
+    if c=="B":
+        while True:#Flyttar svart spelare
+            k=input("Välj en bricka att flytta till ").upper()
+            w=int((ord(k[0])-65))
+            z=int(k[1])
+            if z==x+2:
+                if w==y+2:
+                    b[z][w]=b[x][y]
+                    b[z-1][w-1]=None
+                    b[x][y]=None
+                    check_for_queen(c, z, w)
+                    return False
+                if w==y-2:
+                    b[z][w]=b[x][y]
+                    b[z-1][w+1]=None
+                    b[x][y]=None
+                    check_for_queen(c, z, w)
+                    return False
+                else:
+                    return True
+                
+    if c=="W":
+        while True:#Flyttar vit spelare
+            k=input("Välj en bricka att flytta till ").upper()
+            w=int((ord(k[0])-65))
+            z=int(k[1])
+            if z==x-2:
+                if w==y-2:
+                    b[z][w]=b[x][y]
+                    b[z+1][w+1]=None
+                    b[x][y]=None
+                    check_for_queen(c, z, w)
+                    return False
+                if w==y+2:
+                    b[z][w]=b[x][y]
+                    b[z+1][w-1]=None
+                    b[x][y]=None
+                    check_for_queen(c, z, w)
+                    return False
+            else:
+                return True
 
 def check(c):
     lista=[]
-    print("CHECK")
     for y in range(GRID_SIZE):
         for x in range(GRID_SIZE):
-            if b[y][x] != None and b[y][x].color == c:
-                if(is_valid_move(y, x)):
+            if b[y][x] != None and b[y][x].color ==c:
+                if(is_valid_move(c, y, x)):
                     lista.append([y, x])
-    print(lista)
     return  lista
 
-def is_valid_move(y, x):    
+def check_for_queen(c, z, w):
+    if c=="B" and w==GRID_SIZE:
+        b[z][w].isdam=True
+    if c=="W" and w==0:
+        b[z][w].isdam=True
+
+def check_for_more_moves(c,lista,x,y,w,z):
+    lista=check(c)
+    if len(lista)>0:
+        x=z
+        y=w
+        print_board(b)
+        return True
+    else:
+        return False
+    return lista
+
+def is_valid_move(c, y, x):    
     pawn = b[y][x]
-    #   If the pawn is white
-    if(pawn.color == "W"):
-        if(can_jump_up(y)):
-            if(can_jump_left(x)):
+    if pawn.isdam==True:
+        if can_capture_up(c, y, x):
+            return True
 
-                #   Checks if there is a black pawn top left
-                if(b[y - 1][x - 1] != None and b[y - 1][x - 1].color == "B"):
-                    if(b[y - 2][x - 2] == None):
-                        return True
+        if can_capture_down(c, y, x):
+            return True
 
-            if(can_jump_right(x)):
+    else:
+        if c=="W":
+            if can_capture_up(c, y, x):
+                return True
+        if c=="B":
+            if can_capture_down(c, y, x):
+                return True
+    return False 
 
-                #   Checks if there is a black pawn top right
-                if(b[y - 1][x + 1] != None and b[y - 1][x + 1].color == "B"):
-                    if(b[y - 2][x + 2] == None):
-                        return True
-
-    return False
+def can_jump_down(y):
+    if(y + 2<=GRID_SIZE):
+        return True
+    else:
+        return False
 
 def can_jump_up(y):
     if(y - 2 >= 0):
@@ -147,21 +276,69 @@ def can_jump_right(x):
     else:
         return False
 
-def main():
+def can_capture_up(c,y,x):
+    if(can_jump_up(y)):
+        if(can_jump_left(x)):
+            if(b[y - 1][x - 1] != None and b[y - 1][x - 1].color !=c):
+                if(b[y - 2][x - 2] == None):
+                    return True
+
+        if(can_jump_right(x)):
+            if(b[y - 1][x + 1] != None and b[y - 1][x + 1].color !=c):
+                if(b[y - 2][x + 2] == None):
+                    return True
+
+def can_capture_down(c,y,x):
+    if can_jump_down(y):
+        if(can_jump_left(x)):
+            if(b[y + 1][x - 1] != None and b[y + 1][x - 1].color !=c):
+                if(b[y + 2][x - 2] == None):
+                    return True
+
+        if(can_jump_right(x)):
+            if(b[y + 1][x + 1] != None and b[y + 1][x + 1].color !=c):
+                if(b[y + 2][x + 2] == None):
+                    return True
+
+def check_win(c):
+    pawnlist=[]
+    for y in range(GRID_SIZE):
+        for x in range(GRID_SIZE):
+            if b[y][x] != None and b[y][x].color ==c:
+                    pawnlist.append(c)
     
-    while(True):
+    if c not in pawnlist:
+        print(c, " wins")
+        #end=datetime.datetime.now().time
+        return False
+    #return end
+    return pawnlist  
+
+def main():
+    Game_running=True
+    while Game_running:
         #   White move
         print_board(b)
-        lista=check("W")
+        c="W"
+        lista=check(c)
+        print(lista)
         print("White's turn")
-        move_pawn(lista)
+        print("Möjliga drag")
+        for pawn in lista:
+            print(chr(pawn[1] + 65) + str(pawn[0]))
+        move_pawn(lista,c)
+        pawnlist=check_win(c)
 
         #   Black move
+
         print_board(b)
+        c="B"
         print("Black's turn")
-        lista=check("B")
-        move_pawn(lista)
-
-
+        print("Möjliga drag")
+        lista=check(c)
+        for pawn in lista:
+            print(chr(pawn[1] + 65) + str(pawn[0]))
+        move_pawn(lista,c)
+        print(lista)
+        pawnlist=check_win(c)
 main()
-
