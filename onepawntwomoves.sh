@@ -1,0 +1,1 @@
+py Checkers.py < outofindex.txt
