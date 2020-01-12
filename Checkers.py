@@ -250,7 +250,7 @@ def another_move(c,lista):
                     b[y][x]=None
                     check_for_queen(c, z, w)
                     return False
-                if w==x-2:
+                elif w==x-2:
                     b[z][w]=b[y][x]
                     b[z-1][w+1]=None
                     b[y][x]=None
