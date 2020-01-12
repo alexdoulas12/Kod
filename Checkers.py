@@ -8,7 +8,7 @@ class Pawn(object):
     def __init__(self,color,isdam):
             self.color=color
             self.isdam=isdam
-GRID_SIZE = 10
+GRID_SIZE = 8
 
 def create_board():
     board=[]
@@ -56,8 +56,7 @@ def print_board(board):
     print("")
 b = create_board()
 #!!!TILL NÄSTA GÅNG!!!
-# 1.)Lägg till check_for_queen i move_pawn
-# 2.) Tidsfunktion + highscore-lista
+# 1.) Tidsfunktion + highscore-lista
 
 def move_pawn(lista,c):
     move_made=False
@@ -84,6 +83,28 @@ def move_pawn(lista,c):
                 w=int((ord(k[0])-65))
                 z=int(k[1])
                 if([x, y]) in lista:
+                    if b[x][y].isdam==True:
+                        if z==x-2:
+                            if w==y-2:
+                                b[z][w]=b[x][y]
+                                b[z+1][w+1]=None
+                                b[x][y]=None
+                                Outer=False
+                                move_made=True
+                                check_for_queen(c, z, w)
+                                break
+                            if w==y+2:
+                                b[z][w]=b[x][y]
+                                b[z+1][w-1]=None
+                                b[x][y]=None
+                                Outer=False
+                                move_made=True
+                                check_for_queen(c, z, w)
+                                break
+                            else:
+                                continue
+                        else:
+                            continue     
                     if z==x+2:
                         if w==y+2:
                             b[z][w]=b[x][y]
@@ -105,6 +126,14 @@ def move_pawn(lista,c):
                         else:
                             return True
                 else:
+                    if b[x][y].isdam==True:
+                        if z==x-1 and (w==y+1 or w==y-1):
+                            if b[z][w]==None: 
+                                b[z][w]=b[x][y]
+                                b[x][y]=None
+                                Outer=False
+                                check_for_queen(c, z, w)
+                                break           
                     if z==x+1 and (w==y+1 or w==y-1):
                         if b[z][w]==None:
                             b[z][w]=b[x][y]
@@ -121,6 +150,27 @@ def move_pawn(lista,c):
                 w=int((ord(k[0])-65))
                 z=int(k[1])
                 if([x,y]) in lista:
+                    if b[x][y].isdam==True:
+                        if z==x+2:
+                            if w==y+2:
+                                b[z][w]=b[x][y]
+                                b[z-1][w-1]=None
+                                b[x][y]=None
+                                Outer=False
+                                move_made=True
+                                check_for_queen(c,z,w)
+                                break
+                                
+                            if w==y-2:
+                                b[z][w]=b[x][y]
+                                b[z-1][w+1]=None
+                                b[x][y]=None
+                                Outer=False
+                                move_made=True
+                                check_for_queen(c, z, w)
+                                break
+                            else:
+                                continue
                     if z==x-2:
                         if w==y-2:
                             b[z][w]=b[x][y]
@@ -139,8 +189,18 @@ def move_pawn(lista,c):
                             check_for_queen(c, z, w)
                             break
                         else:
-                            return True
+                            continue
+                    else:
+                        continue
                 else:
+                    if b[x][y].isdam==True:
+                        if z==x+1 and (w==y+1 or w==y-1):
+                            if b[z][w]==None:
+                                b[z][w]=b[x][y]
+                                b[x][y]=None
+                                Outer=False
+                                check_for_queen(c, z, w)
+                                break
                     if z==x-1 and (w==y+1 or w==y-1):
                         if b[z][w]==None: 
                             b[z][w]=b[x][y]
@@ -160,10 +220,6 @@ def another_move(c,lista,x,y):
     for pawn in lista:
             y=pawn[1]
             x=pawn[0]
-    print("y, x")
-    print(y,x)
-    print(chr(y+65),x)
-    print("lista:")
     for pawn in lista:
             print(chr(pawn[1] + 65) + str(pawn[0]))
     if c=="B":
@@ -171,6 +227,22 @@ def another_move(c,lista,x,y):
             k=input("Välj en bricka att flytta till ").upper()
             w=int((ord(k[0])-65))
             z=int(k[1])
+            if b[x][y].isdam==True:
+                if z==x-2:
+                    if w==y-2:
+                        b[z][w]=b[x][y]
+                        b[z+1][w+1]=None
+                        b[x][y]=None
+                        check_for_queen(c, z, w)
+                        return False
+                    if w==y+2:
+                        b[z][w]=b[x][y]
+                        b[z+1][w-1]=None
+                        b[x][y]=None
+                        check_for_queen(c, z, w)
+                        return False
+                else:
+                    return True
             if z==x+2:
                 if w==y+2:
                     b[z][w]=b[x][y]
@@ -192,6 +264,22 @@ def another_move(c,lista,x,y):
             k=input("Välj en bricka att flytta till ").upper()
             w=int((ord(k[0])-65))
             z=int(k[1])
+            if b[x][y].isdam==True:
+                if z==x+2:
+                    if w==y+2:
+                        b[z][w]=b[x][y]
+                        b[z-1][w-1]=None
+                        b[x][y]=None
+                        check_for_queen(c, z, w)
+                        return False
+                    if w==y-2:
+                        b[z][w]=b[x][y]
+                        b[z-1][w+1]=None
+                        b[x][y]=None
+                        check_for_queen(c, z, w)
+                        return False
+                    else:
+                        return True
             if z==x-2:
                 if w==y-2:
                     b[z][w]=b[x][y]
@@ -218,18 +306,32 @@ def check(c):
     return  lista
 
 def check_for_queen(c, z, w):
-    if c=="B" and w==GRID_SIZE:
+    if c=="B" and z==GRID_SIZE:
+        if b[z][w].isdam==False:
+            print("The following piece has become a queen\n")
+            print(chr(w+65)+str(z))
         b[z][w].isdam=True
-    if c=="W" and w==0:
+    if c=="W" and z==0:
+        if b[z][w].isdam==False:
+            print("The following piece has become a queen\n")
+            print(chr(w+65)+str(z))
         b[z][w].isdam=True
 
 def check_for_more_moves(c,lista,x,y,w,z):
     lista=check(c)
+    
+
     if len(lista)>0:
-        x=z
-        y=w
-        print_board(b)
-        return True
+        if ([z, w]) in lista:
+            x=z
+            y=w
+            print_board(b)
+            for pawn in lista:
+                print("Moving/n")
+                print(chr(pawn[1] + 65) + str(pawn[0]))
+            return True
+        else:
+            return False
     else:
         return False
     return lista
