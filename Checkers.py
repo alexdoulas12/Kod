@@ -1,8 +1,9 @@
+from pdb import set_trace
 import datetime
 start = datetime.datetime.now().time
 #print(start)
 #end=datetime.datetime.now().time
-#return 
+#return
 class Pawn(object):
 
     def __init__(self,color,isdam):
@@ -58,14 +59,66 @@ b = create_board()
 #!!!TILL NÄSTA GÅNG!!!
 # 1.) Tidsfunktion + highscore-lista
 
+def valid_move_from():
+    while True:
+            try:
+                p=input("Choose a pawn to move ").upper()
+                y=int(p[1])
+                if p[0]==quit:
+                    print("Shutting down")
+                    global Game_running
+                    Game_running=True
+                    return
+                elif y>GRID_SIZE-1 or y<0:
+                    print("Choose a pawn in the form of: A5 B2 C9...")
+                    continue
+                elif len(p)>2:
+                    print("Choose a pawn in the form of: A5 B2 C9...")
+                    continue
+                else:
+                    return p
+            except IndexError:
+                print("IndexError")
+                continue
+            except ValueError:
+                print(p)
+                print("ValueError")
+                continue
+
+def valid_move_to():
+    while True:
+            try:
+                k=input("Choose a pawn to move to ").upper()
+
+                z=int(k[1])
+                if k[0]==quit:
+                    print("Shutting down")
+                    global Game_running
+                    Game_running=True
+                    return
+                elif z>GRID_SIZE-1 or z<0:
+                    print("Choose a pawn in the form of: A5 B2 C9...")
+                    continue
+                elif len(k)>2:
+                    print("Choose a pawn in the form of: A5 B2 C9...")
+                    continue
+                else:
+                    return k
+            except IndexError:
+                print("IndexError")
+                continue
+            except ValueError:
+                print("ValueError")
+                continue
+
 def move_pawn(lista,c):
     move_made=False
     Outer=True
     while Outer:
-        p=input("Välj en bricka att flytta ").upper()
+        p=valid_move_from()
+        
         x=int((ord(p[0])-65))
         y=int(p[1])
-        
         if(len(lista) > 0):
             if([y, x] not in lista):
                 print("The following pawns have moves:")
@@ -79,7 +132,7 @@ def move_pawn(lista,c):
             if (len(lista)==0) and (b[y+1][x-1] and b[y+1][x+1])!=None:
                 continue
             while True:#Flyttar svart spelare
-                k=input("Välj en bricka att flytta till ").upper()
+                k=valid_move_to()
                 w=int((ord(k[0])-65))
                 z=int(k[1])
                 if([y, x]) in lista:
@@ -224,7 +277,7 @@ def another_move(c,lista):
 
     if c=="B":
         while True:#Flyttar svart spelare
-            k=input("Välj en bricka att flytta till ").upper()
+            k=valid_move_to()
             w=int((ord(k[0])-65))
             z=int(k[1])
             if b[y][x].isdam==True:
@@ -319,14 +372,11 @@ def check_for_queen(c, z, w):
 
 def check_for_more_moves(c,lista,x,y,w,z):
     lista=check(c)
-    
     if len(lista)>0:
         if ([z, w]) in lista:
-            # x=z
-            # y=w
             print_board(b)
             for pawn in lista:
-                print("Moving/n")
+                print("Moving ", end="")
                 print(chr(pawn[1] + 65) + str(pawn[0]))
             return True
         else:
@@ -389,7 +439,6 @@ def can_capture_up(c,y,x):
                 if(b[y - 2][x + 2] == None):
                     return True
 
-from pdb import set_trace
 def can_capture_down(c,y,x):
     if can_jump_down(y):
         if(can_jump_left(x)):
@@ -409,38 +458,55 @@ def check_win(c):
             if b[y][x] != None and b[y][x].color ==c:
                     pawnlist.append(c)
     
-    if c not in pawnlist:
-        print(c, " wins")
-        #end=datetime.datetime.now().time
-        return False
-    #return end
-    return pawnlist  
+    if c=="B":
+        if len(pawnlist)==0:
+            print("White wins")
+            #end=datetime.datetime.now().time
+            global Game_running
+            Game_running=True
+            return
+    if c=="W":
+        if len(pawnlist)==0:
+            print("Black wins")
+            #end=datetime.datetime.now().time
+            Game_running=False
+            return
+    
+    return pawnlist
+
+def print_availiable_moves(c):
+    lista=check(c)
+    if c=="W":
+        print("White's turn")
+        if len(lista)>0:
+            for pawn in lista:
+                print("Availiable moves", end="")
+                print(chr(pawn[1] + 65) + str(pawn[0]))
+    if c=="B":
+        print("Black's turn")
+        if len(lista)>0:
+            for pawn in lista:
+                print("Availiable moves", end="")
+                print(chr(pawn[1] + 65) + str(pawn[0]))
+    return lista
 
 def main():
+    global Game_running
     Game_running=True
     while Game_running:
         #   White move
         print_board(b)
         c="W"
-        lista=check(c)
-        print(lista)
-        print("White's turn")
-        print("Möjliga drag")
-        for pawn in lista:
-            print(chr(pawn[1] + 65) + str(pawn[0]))
+        pawnlist=check_win(c)
+        lista=print_availiable_moves(c)
         move_pawn(lista,c)
         pawnlist=check_win(c)
-
         #   Black move
 
         print_board(b)
         c="B"
-        print("Black's turn")
-        print("Möjliga drag")
-        lista=check(c)
-        for pawn in lista:
-            print(chr(pawn[1] + 65) + str(pawn[0]))
+        pawnlist=check_win(c)
+        lista=print_availiable_moves(c)
         move_pawn(lista,c)
-        print(lista)
         pawnlist=check_win(c)
 main()
