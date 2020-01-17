@@ -1,10 +1,6 @@
 from pdb import set_trace
 import datetime
-start = datetime.datetime.now().time
-#print(start)
-#end=datetime.datetime.now().time
-#return
-class Pawn(object):
+class Pawn(object):#Skapar objekten pjäser med färg och drottningskap som attribut
 
     def __init__(self,color,isdam):
             self.color=color
@@ -58,8 +54,9 @@ def print_board(board):
 b = create_board()
 #!!!TILL NÄSTA GÅNG!!!
 # 1.) Tidsfunktion + highscore-lista
-
-def valid_move_from():
+# 2.) Skapa möjlighet att avsluta spel
+# 3.) Välja startfärg
+def valid_move_from():#Kollar om den initiala pjäsen är inom brädet och av rätt form
     while True:
             try:
                 p=input("Choose a pawn to move ").upper()
@@ -85,10 +82,10 @@ def valid_move_from():
                 print("ValueError")
                 continue
 
-def valid_move_to():
+def valid_move_to():#Kollar om rutan man flyttar till är inom brädet och av rätt form 
     while True:
             try:
-                k=input("Choose a pawn to move to ").upper()
+                k=input("Choose a square to move to ").upper()
 
                 z=int(k[1])
                 if k[0]==quit:
@@ -97,10 +94,10 @@ def valid_move_to():
                     Game_running=True
                     return
                 elif z>GRID_SIZE-1 or z<0:
-                    print("Choose a pawn in the form of: A5 B2 C9...")
+                    print("Choose a square in the form of: A5 B2 C9...")
                     continue
                 elif len(k)>2:
-                    print("Choose a pawn in the form of: A5 B2 C9...")
+                    print("Choose a square in the form of: A5 B2 C9...")
                     continue
                 else:
                     return k
@@ -111,7 +108,7 @@ def valid_move_to():
                 print("ValueError")
                 continue
 
-def move_pawn(lista,c):
+def move_pawn(lista,c):#Flyttar pjäsen utifrån färg och listan med tillgängliga drag
     move_made=False
     Outer=True
     while Outer:
@@ -269,7 +266,7 @@ def move_pawn(lista,c):
             while (check_for_more_moves(c,lista,y,x,w,z)==True):   
                     another_move(c,lista)
 
-def another_move(c,lista):
+def another_move(c,lista):#Utför ett andra drag om det är tillgängligt. Lik move_pawn
     for pawn in lista:
             x=pawn[1]
             y=pawn[0]
@@ -349,7 +346,7 @@ def another_move(c,lista):
             else:
                 return True
 
-def check(c):
+def check(c):#Kollar om det finns pjäser av färg c som har ett tillgängligt drag och lägger isåfall till de i en lista
     lista=[]
     for y in range(GRID_SIZE):
         for x in range(GRID_SIZE):
@@ -358,7 +355,7 @@ def check(c):
                     lista.append([y, x])
     return  lista
 
-def check_for_queen(c, z, w):
+def check_for_queen(c, z, w):#Kollar om en pjäs har nått andra sidan brädet och gör isåfall den till en drottning
     if c=="B" and z==GRID_SIZE-1:
         if b[z][w].isdam==False:
             print("The following piece has become a queen ", end="")
@@ -370,7 +367,7 @@ def check_for_queen(c, z, w):
             print(chr(w+65)+str(z))
         b[z][w].isdam=True
 
-def check_for_more_moves(c,lista,x,y,w,z):
+def check_for_more_moves(c,lista,x,y,w,z):#Kollar om det finns mer tillgängliga drag för pjäsen som senast flyttades
     lista=check(c)
     if len(lista)>0:
         if ([z, w]) in lista:
@@ -490,9 +487,29 @@ def print_availiable_moves(c):
                 print(chr(pawn[1] + 65) + str(pawn[0]))
     return lista
 
+def valid_name_input():#Kollar att namnen är i bokstavsform
+    while True:
+            try:
+                name=input("Write your first name ").capitalize()
+                if name.isalpha():#Kollar om namnet består av bara bokstäver
+                    print("HEJ")
+                    if len(name)>=3:
+                        return name
+                    else:
+                        print("Name must be at least three letters long")
+                        continue
+                else:
+                    print("Name must consist of only letters")
+                    continue
+            except:
+                print("except")
+                continue
+
+
 def main():
     global Game_running
     Game_running=True
+    start = datetime.datetime.now().time#Tar in starttiden
     while Game_running:
         #   White move
         print_board(b)
@@ -509,4 +526,7 @@ def main():
         lista=print_availiable_moves(c)
         move_pawn(lista,c)
         pawnlist=check_win(c)
+    else:
+       name=valid_name_input()#Tar in namn på spelaren som sedan läggs till
+       end=datetime.datetime.now()#Tar in tiden då spelet avslutades
 main()
