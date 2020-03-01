@@ -280,16 +280,16 @@ def move_pawn(lista,c):#Flyttar pjäsen utifrån färg och listan med tillgängl
                             break              
     else:
         if capture_made:
-            # lista=check(c)
-            # for pawn in lista:
-            #         print(chr(pawn[1] + 65) + str(pawn[0]))
             while (check_for_more_moves(c,lista,y,x,w,z)==True):   
                     another_move(c,lista)
 
 def another_move(c,lista):#Utför ett andra drag om det är tillgängligt. Lik move_pawn
+    lista=check(c)
+    print("LISTA I ANOTHER MOVE:", lista)
     for pawn in lista:
             x=pawn[1]
             y=pawn[0]
+            print("X,Y=",x,y)
             print(chr(pawn[1] + 65) + str(pawn[0]))
 
     if c=="B":
@@ -404,7 +404,6 @@ def check_for_more_moves(c,lista,x,y,w,z):#Kollar om det finns mer tillgängliga
             return False
     else:
         return False
-    return lista
 
 def is_valid_move(c, y, x):#Kollar om man kan fånga en pjäs
     pawn = b[y][x]
@@ -478,7 +477,7 @@ def check_win(c):#Kollar om spelet vunnits
         for x in range(GRID_SIZE):
             if b[y][x] != None and b[y][x].color ==c:
                     pawnlist.append(c)
-    
+
     if c=="B":
         if len(pawnlist)==0:
             print("White wins")
@@ -489,8 +488,6 @@ def check_win(c):#Kollar om spelet vunnits
             print("Black wins")
             Game_running=False
             return Game_running
-    
-    return pawnlist
 
 def print_availiable_moves(c):#Skriver ut tillgängliga drag
     lista=check(c)
@@ -599,10 +596,10 @@ def main():
     while Game_running:
         #   White move
         print_board(b)
-        pawnlist=check_win(c)
+        check_win(c)
         lista=print_availiable_moves(c)
         move_pawn(lista,c)
-        pawnlist=check_win(c)
+        check_win(c)
         if Game_running==True:
             if c=="W":
                 c="B"
@@ -610,10 +607,8 @@ def main():
                 c="W"
         
     else:
-        print("c_player=",c_player, "c=", c)
-        if c!=c_player:
-           game_finished(start)
-        else:
-            print("You lose")
+        game_finished(start)
+       
+        print("You lose")
 
 main()
