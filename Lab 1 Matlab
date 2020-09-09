@@ -1,0 +1,88 @@
+%% 1
+%a
+A=[ 1 2 3 0; 0 4 5 6; 1 1 -1 0; 1 1 1 1 ];
+b=[7 6 5 4]';
+x=A\b
+%b
+r=b-A*x
+%c Avrundningsfel av datorn
+
+%% 2
+%aRita funktion, lokalisera område för rötter, newton  eller sekantmetoden
+
+%b
+syms x
+f= @(x) 51*x - ((x.^2+x+0.03)./(2*x+1)).^7 -17*x.*exp(-x);
+a=0:0.01:4;
+A=:0.1:10;
+subplot(2,1,1),plot(a,f(a));
+grid
+xlabel('x')
+ylabel('f(x)')
+title('x=[0,2]')
+subplot(2,1,2),plot(A,f(A))
+grid
+xlabel('x')
+ylabel('f(x)')
+title('x=[0,4]')
+
+%% c
+clc 
+disp('Newton-Raphsons metod')
+x=3.5;
+t=1;
+format short e
+disp(' x f(x) fprim(x) korr kvad linj')
+while abs(t)>5e-8
+f = 51*x - ((x.^2+x+0.03)./(2*x+1)).^7 -17*x.*exp(-x);
+fp = (14*(x^2 + x + 3/100)^7)/(2*x + 1)^8 - (7*(x^2 + x + 3/100)^6)/(2*x + 1)^6 - 17*exp(-x) + 17*x*exp(-x) + 51;
+g=t;
+t=f/fp;
+kvad=t/g^2; linj=t/g;
+disp([x f fp t kvad linj]);
+x=x-t;
+end
+rot=x
+
+%d
+%rot1=6.4324e-13
+%rot2=3.7892e+00
+
+%e
+%se rad 40
+%f
+%kvadrat-termen konvergerar mot ett tal
+%g
+%Metodern körs enligt while-satsen tills felet är mindre än en bestämd
+%tolerans. Att relativfelet är tillräckligt litet bestäms av toleransen
+%h
+% 2 negativa rötter, nära ändpunkterna på intervallet [-1.1:-0.5]
+
+
+%% 3
+clc
+disp('Sekantmetoden');
+x0=3; x1=4;
+g0=1; g1=1;
+disp('x f korr konv lin')
+disp([x0 f0])
+while abs(x1-x0)>5e-8;
+    f0=51*x0 - ((x0.^2+x0+0.03)./(2*x0+1)).^7 -17*x0.*exp(-x0);
+    f1=51*x1 - ((x1.^2+x1+0.03)./(2*x1+1)).^7 -17*x1.*exp(-x1);
+    t=f1*(x1-x0)/(f1-f0);
+    k=t/(g1*g0);
+    disp([x1 f1 t k ])   
+    x0=x1; f0=f1; x1=x1-t;
+    g0=g1; g1=t;
+end;
+rot=x1
+%a
+%rot1=6.4322e-13
+%rot2=3.7892e+00
+%b
+%Snabb och regelbundenkonvergens(t avtar med storleksordning e-2 per
+%iteration), beror på gissningen
+%
+%c
+% Varken eller,enligt teorin är sekantmetoden superlineär,
+%d
