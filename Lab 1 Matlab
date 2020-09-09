@@ -86,3 +86,29 @@ rot=x1
 %c
 % Varken eller,enligt teorin är sekantmetoden superlineär,
 %d
+
+
+clc
+clear all
+       x = [1; 32; 60; 91; 121; 152; 182; 213; 243; 273; 304; 334; 364];
+y = [373; 484; 635; 798; 956; 1085; 1104; 996; 841; 682; 523; 394; 373];
+plot(x,y,"x") %polynomet ser ut att vara av grad 2
+
+
+
+%punkterna x1 x2 och x3 = 152; 182 och 213
+
+
+x1=152;
+x2=182;
+x3=213;
+
+%fel?
+a=[1, x1, x1.^2;1, x2, x2.^2;1, x3, x3.^2];
+b=[1085; 110; 996];
+a\b
+
+%fel?
+e=(0:25:400);
+p=c1+c2.*e+c3.*e.^2;
+plot(e,p)
