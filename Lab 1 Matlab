@@ -14,7 +14,7 @@ r=b-A*x
 syms x
 f= @(x) 51*x - ((x.^2+x+0.03)./(2*x+1)).^7 -17*x.*exp(-x);
 a=0:0.01:4;
-A=:0.1:10;
+A=-10:0.1:10;
 subplot(2,1,1),plot(a,f(a));
 grid
 xlabel('x')
